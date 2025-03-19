@@ -6,21 +6,19 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 import com.gymmanagement.gym_app.domain.enums.PaymentMethod;
+import com.gymmanagement.gym_app.domain.enums.PaymentStatus;
 
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public class Payment {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    // Relationship: Each payment belongs to a single GymMember
     @ManyToOne
     @JoinColumn(name = "gym_member_id", nullable = false)
     private GymMember gymMember;
@@ -35,6 +33,7 @@ public class Payment {
     @Column(nullable = false, length = 20)
     private PaymentMethod paymentMethod;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String status;
+    private PaymentStatus status;
 }

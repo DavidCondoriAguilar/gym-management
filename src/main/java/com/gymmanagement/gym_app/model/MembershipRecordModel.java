@@ -8,15 +8,12 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public class MembershipRecordModel {
-
     private UUID id;
     private UUID gymMemberId;
     private UUID membershipPlanId;
     private LocalDate startDate;
     private LocalDate endDate;
     private String status;
+    private LocalDate cancellationDate;
 }
-

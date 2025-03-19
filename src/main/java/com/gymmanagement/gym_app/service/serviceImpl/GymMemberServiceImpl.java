@@ -70,4 +70,5 @@ public class GymMemberServiceImpl implements GymMemberService {
         return gymMemberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Member not found with ID: " + id));
     }
+
 }

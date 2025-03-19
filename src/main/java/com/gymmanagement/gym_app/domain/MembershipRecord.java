@@ -20,15 +20,16 @@ public class MembershipRecord {
 
     // Relationship: Each record belongs to a GymMember
     @ManyToOne
-    @JoinColumn(name = "gym_member_id")
+    @JoinColumn(name = "gym_member_id", nullable = false)
     private GymMember gymMember;
 
     @ManyToOne
-    @JoinColumn(name = "membership_plan_id")
+    @JoinColumn(name = "membership_plan_id", nullable = false)
     private MembershipPlan membershipPlan;
 
     private LocalDate startDate;
     private LocalDate endDate;
+    private boolean active;
 
-    private String status;
+    private LocalDate cancellationDate;
 }
