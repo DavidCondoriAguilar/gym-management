@@ -18,7 +18,7 @@ public class MembershipRecord {
     @GeneratedValue
     private UUID id;
 
-    // Relación: Cada registro pertenece a un GymMember
+    // Relationship: Each record belongs to a GymMember
     @ManyToOne
     @JoinColumn(name = "gym_member_id")
     private GymMember gymMember;
@@ -27,8 +27,8 @@ public class MembershipRecord {
     @JoinColumn(name = "membership_plan_id")
     private MembershipPlan membershipPlan;
 
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    private String estado;
+    private String status;
 }

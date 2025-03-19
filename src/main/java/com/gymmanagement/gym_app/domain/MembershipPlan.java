@@ -21,20 +21,20 @@ public class MembershipPlan {
     private UUID id;
 
     @Column(nullable = false)
-    private String nombre;
+    private String name;
 
-    private Integer duracionMeses;
+    private Integer durationMonths;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal costo;
+    private BigDecimal cost;
 
-    private String descripcion;
+    private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private MembershipType tipo;
+    private MembershipType type;
 
-    // Relación: Un plan puede estar asignado a muchos clientes
+    // Relationship: A plan can be assigned to many members
     @OneToMany(mappedBy = "membershipPlan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GymMember> gymMembers;
 }

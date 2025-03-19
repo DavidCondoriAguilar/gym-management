@@ -12,16 +12,16 @@ import java.util.UUID;
 public class GymMemberModel {
 
     private UUID id;
-    private String nombre;
+    private String name;
     private String email;
-    private String telefono;
-    private Boolean activo;
-    private LocalDate fechaRegistro;
+    private String phone;
+    private Boolean active;
+    private LocalDate registrationDate;
     private LocalDate membershipStart;
     private LocalDate membershipEnd;
 
     private MembershipPlanModel membershipPlan;
-    private List<PaymentModel> pagos;
+    private List<PaymentModel> payments;
     private List<MembershipRecordModel> membershipRecords;
-    private List<PromotionModel> promociones;
+    private List<PromotionModel> promotions;
 }

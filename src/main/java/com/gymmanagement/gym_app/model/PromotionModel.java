@@ -14,8 +14,8 @@ import java.util.UUID;
 public class PromotionModel {
 
     private UUID id;
-    private String nombre;
-    private BigDecimal descuentoPorcentaje;
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
+    private String name;
+    private BigDecimal discountPercentage;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

@@ -21,15 +21,15 @@ public class Promotion {
     private UUID id;
 
     @Column(nullable = false)
-    private String nombre;
+    private String name;
 
     @Column(precision = 5, scale = 2)
-    private BigDecimal descuentoPorcentaje;
+    private BigDecimal discountPercentage;
 
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    // Relación inversa: Las promociones aplicadas a los GymMember
-    @ManyToMany(mappedBy = "promociones")
+    // Inverse relationship: Promotions applied to GymMembers
+    @ManyToMany(mappedBy = "promotions")
     private List<GymMember> gymMembers;
 }

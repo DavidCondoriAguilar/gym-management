@@ -6,20 +6,16 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { MembershipPlanMapper.class, PaymentMapper.class, MembershipRecordMapper.class, PromotionMapper.class })
 public interface GymMemberMapper {
 
     GymMemberMapper INSTANCE = Mappers.getMapper(GymMemberMapper.class);
 
-    @Mapping(target = "membershipPlan", source = "membershipPlan")
-    @Mapping(target = "pagos", source = "pagos")
-    @Mapping(target = "membershipRecords", source = "membershipRecords")
-    @Mapping(target = "promociones", source = "promociones")
+    @Mapping(target = "membershipStart", source = "membershipStartDate") // Diferente nombre
+    @Mapping(target = "membershipEnd", source = "membershipEndDate") // Diferente nombre
     GymMemberModel toModel(GymMember entity);
 
-    @Mapping(target = "membershipPlan", source = "membershipPlan")
-    @Mapping(target = "pagos", source = "pagos")
-    @Mapping(target = "membershipRecords", source = "membershipRecords")
-    @Mapping(target = "promociones", source = "promociones")
+    @Mapping(target = "membershipStartDate", source = "membershipStart")
+    @Mapping(target = "membershipEndDate", source = "membershipEnd")
     GymMember toEntity(GymMemberModel model);
 }

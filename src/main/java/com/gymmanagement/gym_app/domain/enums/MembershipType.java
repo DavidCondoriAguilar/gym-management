@@ -1,7 +1,7 @@
 package com.gymmanagement.gym_app.domain.enums;
 
 public enum MembershipType {
-    BASIC,
+    STANDARD,
     PREMIUM,
     VIP
 }

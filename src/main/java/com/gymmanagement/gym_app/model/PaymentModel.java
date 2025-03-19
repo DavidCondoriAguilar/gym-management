@@ -16,8 +16,8 @@ public class PaymentModel {
 
     private UUID id;
     private UUID gymMemberId;
-    private BigDecimal monto;
-    private LocalDate fechaPago;
-    private PaymentMethod metodoPago;
-    private PaymentStatus estado;
+    private BigDecimal amount;
+    private LocalDate paymentDate;
+    private PaymentMethod paymentMethod;
+    private PaymentStatus status;
 }

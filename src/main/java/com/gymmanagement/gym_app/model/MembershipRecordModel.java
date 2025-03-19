@@ -15,7 +15,8 @@ public class MembershipRecordModel {
     private UUID id;
     private UUID gymMemberId;
     private UUID membershipPlanId;
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
-    private String estado;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String status;
 }
+

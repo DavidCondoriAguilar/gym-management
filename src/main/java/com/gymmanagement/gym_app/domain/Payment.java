@@ -20,21 +20,21 @@ public class Payment {
     @GeneratedValue
     private UUID id;
 
-    // Relación: Cada pago pertenece a un único GymMember
+    // Relationship: Each payment belongs to a single GymMember
     @ManyToOne
     @JoinColumn(name = "gym_member_id", nullable = false)
     private GymMember gymMember;
 
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal monto;
+    private BigDecimal amount;
 
     @Column(nullable = false)
-    private LocalDate fechaPago;
+    private LocalDate paymentDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private PaymentMethod metodoPago;
+    private PaymentMethod paymentMethod;
 
     @Column(nullable = false, length = 20)
-    private String estado;
+    private String status;
 }
