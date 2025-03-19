@@ -3,6 +3,7 @@ package com.gymmanagement.gym_app.service.serviceImpl;
 import com.gymmanagement.gym_app.domain.GymMember;
 import com.gymmanagement.gym_app.domain.MembershipPlan;
 import com.gymmanagement.gym_app.domain.MembershipRecord;
+import com.gymmanagement.gym_app.exception.ResourceNotFoundException;
 import com.gymmanagement.gym_app.mapper.MembershipRecordMapper;
 import com.gymmanagement.gym_app.model.MembershipRecordModel;
 import com.gymmanagement.gym_app.repository.GymMemberRepository;
@@ -12,6 +13,8 @@ import com.gymmanagement.gym_app.service.MembershipRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -75,5 +78,15 @@ public class MembershipRecordServiceImpl implements MembershipRecordService {
             throw new RuntimeException("MembershipRecord no encontrado");
         }
         membershipRecordRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void cancelarMembresia(UUID memberId) {
+        MembershipRecord record = membershipRecordRepository.findByGymMember_IdAndActive(memberId, true)
+                .orElseThrow(() -> new ResourceNotFoundException("Membresía activa no encontrada para el usuario: " + memberId));
+
+        record.setActive(false);
+        record.setCancellationDate(LocalDate.now());  // Guarda la fecha de cancelación
+        membershipRecordRepository.save(record);
     }
 }

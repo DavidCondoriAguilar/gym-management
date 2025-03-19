@@ -13,4 +13,7 @@ public interface MembershipRecordService {
     List<MembershipRecordModel> getAllMembershipRecords();
 
     void deleteMembershipRecord(UUID id);
+
+    void cancelarMembresia(UUID membershipRecordId);
+
 }

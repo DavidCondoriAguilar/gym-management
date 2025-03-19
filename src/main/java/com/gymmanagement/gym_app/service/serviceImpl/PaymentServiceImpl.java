@@ -1,6 +1,7 @@
 package com.gymmanagement.gym_app.service.serviceImpl;
 
 import com.gymmanagement.gym_app.domain.GymMember;
+import com.gymmanagement.gym_app.domain.MembershipRecord;
 import com.gymmanagement.gym_app.domain.Payment;
 import com.gymmanagement.gym_app.domain.enums.PaymentStatus;
 import com.gymmanagement.gym_app.exception.ResourceNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -58,6 +60,14 @@ public class PaymentServiceImpl implements PaymentService {
         if (totalPaid.compareTo(membershipCost) >= 0) {
             payment.setStatus(PaymentStatus.COMPLETADO);
             paymentRepository.save(payment);
+
+            // Actualizar cancellationDate en membershipRecords activos
+            for (MembershipRecord record : gymMember.getMembershipRecords()) {
+                if (record.isActive() && record.getCancellationDate() == null) {
+                    record.setCancellationDate(LocalDate.now()); // Fecha de cancelación = Fecha actual
+                    record.setActive(false); // Desactivar la membresía
+                }
+            }
         }
 
         return paymentMapper.toModel(payment);
@@ -90,7 +100,6 @@ public class PaymentServiceImpl implements PaymentService {
         existingPayment = paymentRepository.save(existingPayment);
         return paymentMapper.toModel(existingPayment);
     }
-
 
     @Override
     public void deletePayment(UUID id) {

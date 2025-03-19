@@ -50,8 +50,8 @@ public class GymMember {
 
     @ManyToMany
     @JoinTable(
-            name = "gymmember_promotion",
-            joinColumns = @JoinColumn(name = "gymmember_id"),
+            name = "gym_member_promotion",
+            joinColumns = @JoinColumn(name = "gym_member_id"),
             inverseJoinColumns = @JoinColumn(name = "promotion_id")
     )
     private List<Promotion> promotions;
