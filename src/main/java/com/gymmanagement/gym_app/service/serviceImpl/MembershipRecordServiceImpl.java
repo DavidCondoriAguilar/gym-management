@@ -9,11 +9,14 @@ import com.gymmanagement.gym_app.model.MembershipRecordModel;
 import com.gymmanagement.gym_app.repository.GymMemberRepository;
 import com.gymmanagement.gym_app.repository.MembershipPlanRepository;
 import com.gymmanagement.gym_app.repository.MembershipRecordRepository;
+import com.gymmanagement.gym_app.repository.PaymentRepository;
+import com.gymmanagement.gym_app.domain.Payment;
 import com.gymmanagement.gym_app.service.MembershipRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -28,18 +31,16 @@ public class MembershipRecordServiceImpl implements MembershipRecordService {
     private final GymMemberRepository gymMemberRepository;
     private final MembershipPlanRepository membershipPlanRepository;
     private final MembershipRecordMapper membershipRecordMapper;
+    private final PaymentRepository paymentRepository;
 
     @Override
     public MembershipRecordModel createMembershipRecord(MembershipRecordModel membershipRecordModel) {
-        // Buscar el GymMember por ID
         GymMember gymMember = gymMemberRepository.findById(membershipRecordModel.getGymMemberId())
                 .orElseThrow(() -> new RuntimeException("GymMember no encontrado"));
 
-        // Buscar el MembershipPlan por ID
         MembershipPlan membershipPlan = membershipPlanRepository.findById(membershipRecordModel.getMembershipPlanId())
                 .orElseThrow(() -> new RuntimeException("MembershipPlan no encontrado"));
 
-        // Crear la entidad MembershipRecord
         MembershipRecord record = MembershipRecord.builder()
                 .gymMember(gymMember)
                 .membershipPlan(membershipPlan)
@@ -85,8 +86,28 @@ public class MembershipRecordServiceImpl implements MembershipRecordService {
         MembershipRecord record = membershipRecordRepository.findByGymMember_IdAndActive(memberId, true)
                 .orElseThrow(() -> new ResourceNotFoundException("Membresía activa no encontrada para el usuario: " + memberId));
 
+        List<Payment> payments = paymentRepository.findByGymMember(record.getGymMember());
+        BigDecimal totalPaid = payments.stream()
+                .map(Payment::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal membershipCost = record.getMembershipPlan().getCost();
+
+        if (totalPaid.compareTo(membershipCost) >= 0) {
+            Payment lastPayment = payments.stream()
+                    .max((p1, p2) -> p1.getPaymentDate().compareTo(p2.getPaymentDate()))
+                    .orElse(null);
+
+            if (lastPayment != null) {
+                record.setCancellationDate(lastPayment.getPaymentDate());
+            } else {
+                record.setCancellationDate(LocalDate.now());
+            }
+        } else {
+            record.setCancellationDate(LocalDate.now());
+        }
+
         record.setActive(false);
-        record.setCancellationDate(LocalDate.now());  // Guarda la fecha de cancelación
         membershipRecordRepository.save(record);
     }
 }

@@ -41,33 +41,33 @@ public class PaymentServiceImpl implements PaymentService {
 
         Payment payment = paymentMapper.toEntity(paymentModel);
         payment.setGymMember(gymMember);
+        payment.setPaymentDate(LocalDate.now());
 
         payment = paymentRepository.save(payment);
-
-        // Verificar el total de pagos después de registrar el nuevo
         payments.add(payment);
+
         BigDecimal totalPaid = payments.stream()
                 .map(p -> new BigDecimal(String.valueOf(p.getAmount())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal membershipCost = gymMember.getMembershipPlan().getCost();
 
-        // Si el total pagado es igual o mayor al costo, marcarlo como COMPLETADO
         if (totalPaid.compareTo(membershipCost) >= 0) {
             payment.setStatus(PaymentStatus.COMPLETADO);
             paymentRepository.save(payment);
 
-            // Actualizar cancellationDate en membershipRecords activos
+            // Actualizar los registros de membresía activos
             for (MembershipRecord record : gymMember.getMembershipRecords()) {
                 if (record.isActive() && record.getCancellationDate() == null) {
-                    record.setCancellationDate(LocalDate.now()); // Fecha de cancelación = Fecha actual
-                    record.setActive(false); // Desactivar la membresía
+                    record.setCancellationDate(payment.getPaymentDate());
+                    record.setActive(false);
                 }
             }
         }
 
         return paymentMapper.toModel(payment);
     }
+
 
     @Override
     public PaymentModel getPaymentById(UUID id) {

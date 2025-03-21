@@ -3,6 +3,7 @@ package com.gymmanagement.gym_app.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -31,5 +32,8 @@ public class MembershipRecord {
     private LocalDate endDate;
     private boolean active;
 
+    @Column(name = "cancellation_date")
     private LocalDate cancellationDate;
+
+
 }
