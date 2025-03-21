@@ -36,4 +36,15 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private PaymentStatus status;
+
+    private BigDecimal discountedAmount;
+
+    public void applyDiscount(BigDecimal discountPercentage) {
+        if (discountPercentage.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal discount = amount.multiply(discountPercentage.divide(BigDecimal.valueOf(100)));
+            this.discountedAmount = amount.subtract(discount);
+        } else {
+            this.discountedAmount = amount;
+        }
+    }
 }

@@ -38,15 +38,12 @@ public class GymMember {
     @Column(nullable = false)
     private LocalDate membershipEndDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "membership_plan_id", nullable = false)
     private MembershipPlan membershipPlan;
 
     @OneToMany(mappedBy = "gymMember", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments;
-
-    @OneToMany(mappedBy = "gymMember", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MembershipRecord> membershipRecords;
 
     @ManyToMany
     @JoinTable(
@@ -55,4 +52,7 @@ public class GymMember {
             inverseJoinColumns = @JoinColumn(name = "promotion_id")
     )
     private List<Promotion> promotions;
+
+    @OneToMany(mappedBy = "gymMember", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MembershipRecord> membershipRecords;
 }

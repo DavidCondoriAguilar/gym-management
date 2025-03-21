@@ -12,8 +12,6 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public class Promotion {
 
     @Id
@@ -29,7 +27,6 @@ public class Promotion {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    // Inverse relationship: Promotions applied to GymMembers
     @ManyToMany(mappedBy = "promotions")
     private List<GymMember> gymMembers;
 }

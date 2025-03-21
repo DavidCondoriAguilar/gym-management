@@ -35,17 +35,13 @@ public class PaymentServiceImpl implements PaymentService {
         GymMember gymMember = gymMemberRepository.findById(paymentModel.getGymMemberId())
                 .orElseThrow(() -> new ResourceNotFoundException("GymMember not found with ID: " + paymentModel.getGymMemberId()));
 
-        // Obtener pagos existentes del miembro
         List<Payment> payments = paymentRepository.findByGymMember(gymMember);
 
-        // Validar si el pago excede el costo de la membresía
         PaymentValidator.validatePayment(gymMember, new BigDecimal(String.valueOf(paymentModel.getAmount())), payments);
 
-        // Mapear el modelo de pago a la entidad
         Payment payment = paymentMapper.toEntity(paymentModel);
         payment.setGymMember(gymMember);
 
-        // Guardar el pago
         payment = paymentRepository.save(payment);
 
         // Verificar el total de pagos después de registrar el nuevo
