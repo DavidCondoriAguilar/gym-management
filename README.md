@@ -159,6 +159,8 @@ Esta API permite gestionar la información de los miembros del gimnasio, incluye
 
 ![pdfGym](https://github.com/user-attachments/assets/93900cae-e944-4214-88bb-5fc352af53e4)
 
+![report](https://github.com/user-attachments/assets/939ee3c8-08a7-40ed-b2d7-215c756d56ab)
+
 ---
 
 ## Notas
