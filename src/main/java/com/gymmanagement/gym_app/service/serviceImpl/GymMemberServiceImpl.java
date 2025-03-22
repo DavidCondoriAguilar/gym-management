@@ -53,7 +53,6 @@ public class GymMemberServiceImpl implements GymMemberService {
         }
     }
 
-
     @Override
     public GymMemberModel getMemberById(UUID id) {
         GymMember gymMember = findMemberById(id);

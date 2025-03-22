@@ -98,7 +98,7 @@ public class PDFGeneratorService {
         }
 
         document.add(new Paragraph("Nombre del Plan: " + plan.getName(), normalFont));
-        document.add(new Paragraph("Descripción: " + (plan.getDescription() != null ? plan.getDescription() : "Sin descripción"), normalFont));
+        document.add(new Paragraph("Descripción: " + (plan.getDescription() != null ? plan.getDescription() : "N/A"), normalFont));
         document.add(new Paragraph("Costo: S/ " + DECIMAL_FORMAT.format(plan.getCost()), normalFont));
 
         if (member.getMembershipEndDate() != null) {

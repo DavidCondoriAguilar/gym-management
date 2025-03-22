@@ -28,6 +28,7 @@ public class MembershipPlan {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal cost;
 
+    @Column(nullable = false)
     private String description;
 
     @Enumerated(EnumType.STRING)
