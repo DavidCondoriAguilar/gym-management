@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
@@ -18,12 +19,15 @@ public class ReportController {
 
     private final ReportService reportService;
     private final PdfReportService pdfReportService;
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/retention")
     public ResponseEntity<ReportModel> getRetentionReport() {
         ReportModel report = reportService.getRetentionReport();
         return ResponseEntity.ok(report);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/retention/pdf")
     public ResponseEntity<byte[]> getRetentionReportPdf() {
         ReportModel report = reportService.getRetentionReport();

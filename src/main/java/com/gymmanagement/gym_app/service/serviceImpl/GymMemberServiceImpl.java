@@ -3,9 +3,9 @@ package com.gymmanagement.gym_app.service.serviceImpl;
 import com.gymmanagement.gym_app.domain.GymMember;
 import com.gymmanagement.gym_app.domain.MembershipPlan;
 import com.gymmanagement.gym_app.domain.Promotion;
+import com.gymmanagement.gym_app.dto.request.GymMemberRequestDTO;
+import com.gymmanagement.gym_app.dto.response.GymMemberResponseDTO;
 import com.gymmanagement.gym_app.mapper.GymMemberMapper;
-import com.gymmanagement.gym_app.model.GymMemberModel;
-import com.gymmanagement.gym_app.model.PromotionModel;
 import com.gymmanagement.gym_app.repository.GymMemberRepository;
 import com.gymmanagement.gym_app.repository.MembershipPlanRepository;
 import com.gymmanagement.gym_app.repository.PromotionRepository;
@@ -31,65 +31,47 @@ public class GymMemberServiceImpl implements GymMemberService {
     private final GymMemberMapper gymMemberMapper;
 
     @Override
-    public List<GymMemberModel> getAllMembers() {
+    public List<GymMemberResponseDTO> getAllMembers() {
         return gymMemberRepository.findAll().stream()
-                .map(member -> {
-                    GymMemberModel model = gymMemberMapper.toModel(member);
-                    calculateTotalWithDiscount(model);
-                    return model;
-                })
+                .map(gymMemberMapper::toResponseDTO)
                 .toList();
     }
 
-    private void calculateTotalWithDiscount(GymMemberModel model) {
-        if (model.getMembershipPlan() != null && model.getPromotions() != null) {
-            BigDecimal originalCost = model.getMembershipPlan().getCost();
-            for (PromotionModel promotion : model.getPromotions()) {
-                BigDecimal discount = originalCost.multiply(promotion.getDiscountPercentage())
-                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-                BigDecimal totalWithDiscount = originalCost.subtract(discount);
-                promotion.setTotalWithDiscount(totalWithDiscount);
-            }
-        }
-    }
-
     @Override
-    public GymMemberModel getMemberById(UUID id) {
+    public GymMemberResponseDTO getMemberById(UUID id) {
         GymMember gymMember = findMemberById(id);
-        return gymMemberMapper.toModel(gymMember);
+        return gymMemberMapper.toResponseDTO(gymMember);
     }
+
     @Override
-    public GymMemberModel createMember(@Valid GymMemberModel gymMemberModel) {
+    public GymMemberResponseDTO createMember(@Valid GymMemberRequestDTO gymMemberRequestDTO) {
         // Si no se especifica fecha de finalización, se establece por defecto a 1 mes a partir de hoy
-        if (gymMemberModel.getMembershipEnd() == null) {
-            gymMemberModel.setMembershipEnd(LocalDate.now().plusMonths(1));
+        if (gymMemberRequestDTO.getMembershipEndDate() == null) {
+            gymMemberRequestDTO.setMembershipEndDate(LocalDate.now().plusMonths(1));
         }
 
-        // Cargar el MembershipPlan desde la base de datos usando el ID enviado en el DTO
-        MembershipPlan membershipPlan = null;
-        if (gymMemberModel.getMembershipPlan() != null && gymMemberModel.getMembershipPlan().getId() != null) {
-            membershipPlan = membershipPlanRepository.findById(gymMemberModel.getMembershipPlan().getId())
-                    .orElseThrow(() -> new RuntimeException("Membership Plan not found"));
-        }
+        // Cargar MembershipPlan
+        MembershipPlan membershipPlan = membershipPlanRepository.findById(gymMemberRequestDTO.getMembershipPlanId())
+                .orElseThrow(() -> new RuntimeException("Membership Plan not found"));
 
         // Cargar las Promociones desde la base de datos usando los IDs enviados en el DTO
-        List<Promotion> promotions = gymMemberModel.getPromotions() != null
-                ? gymMemberModel.getPromotions().stream()
-                .map(p -> promotionRepository.findById(p.getId())
-                        .orElseThrow(() -> new RuntimeException("Promotion not found with ID: " + p.getId())))
+        List<Promotion> promotions = gymMemberRequestDTO.getPromotionIds() != null
+                ? gymMemberRequestDTO.getPromotionIds().stream()
+                .map(p -> promotionRepository.findById(p)
+                        .orElseThrow(() -> new RuntimeException("Promotion not found with ID: " + p)))
                 .collect(Collectors.toList())
                 : List.of();
 
-        // Convertir el DTO a entidad usando el mapper
-        GymMember gymMember = gymMemberMapper.toEntity(gymMemberModel);
+        // Crear entidad
+        GymMember gymMember = gymMemberMapper.fromRequestDTO(gymMemberRequestDTO);
         gymMember.setMembershipPlan(membershipPlan);
         gymMember.setPromotions(promotions);
 
-        // Guardar el GymMember en la base de datos
+        // Guardar
         gymMember = gymMemberRepository.save(gymMember);
 
         // Convertir la entidad guardada a DTO para la respuesta
-        GymMemberModel result = gymMemberMapper.toModel(gymMember);
+        GymMemberResponseDTO result = gymMemberMapper.toResponseDTO(gymMember);
 
         // Si el miembro tiene un MembershipPlan y se asociaron promociones, calculamos el total con descuento
         if (membershipPlan != null && promotions != null && !promotions.isEmpty()) {
@@ -117,37 +99,35 @@ public class GymMemberServiceImpl implements GymMemberService {
         return result;
     }
 
-
     @Override
-    public GymMemberModel updateMember(UUID id, @Valid GymMemberModel gymMemberModel) {
+    public GymMemberResponseDTO updateMember(UUID id, @Valid GymMemberRequestDTO gymMemberRequestDTO) {
         GymMember existingMember = findMemberById(id);
 
-        existingMember.setName(gymMemberModel.getName());
-        existingMember.setEmail(gymMemberModel.getEmail());
-        existingMember.setPhone(gymMemberModel.getPhone());
-        existingMember.setActive(gymMemberModel.getActive());
-        existingMember.setRegistrationDate(gymMemberModel.getRegistrationDate());
-        existingMember.setMembershipStartDate(gymMemberModel.getMembershipStart());
-        existingMember.setMembershipEndDate(gymMemberModel.getMembershipEnd());
+        existingMember.setName(gymMemberRequestDTO.getName());
+        existingMember.setEmail(gymMemberRequestDTO.getEmail());
+        existingMember.setPhone(gymMemberRequestDTO.getPhone());
+        existingMember.setActive(gymMemberRequestDTO.getActive());
+        existingMember.setRegistrationDate(gymMemberRequestDTO.getRegistrationDate());
+        existingMember.setMembershipStartDate(gymMemberRequestDTO.getMembershipStartDate());
+        existingMember.setMembershipEndDate(gymMemberRequestDTO.getMembershipEndDate());
 
-        // Actualizar MembershipPlan si se proporciona
-        if (gymMemberModel.getMembershipPlan() != null && gymMemberModel.getMembershipPlan().getId() != null) {
-            MembershipPlan membershipPlan = membershipPlanRepository.findById(gymMemberModel.getMembershipPlan().getId())
-                    .orElseThrow(() -> new RuntimeException("Membership Plan not found"));
-            existingMember.setMembershipPlan(membershipPlan);
-        }
+        // Actualizar MembershipPlan
+        MembershipPlan membershipPlan = membershipPlanRepository.findById(gymMemberRequestDTO.getMembershipPlanId())
+                .orElseThrow(() -> new RuntimeException("Membership Plan not found"));
+        existingMember.setMembershipPlan(membershipPlan);
 
-        // Actualizar Promotions si se proporcionan
-        if (gymMemberModel.getPromotions() != null) {
-            List<Promotion> promotions = gymMemberModel.getPromotions().stream()
-                    .map(p -> promotionRepository.findById(p.getId())
-                            .orElseThrow(() -> new RuntimeException("Promotion not found with ID: " + p.getId())))
-                    .collect(Collectors.toList());
-            existingMember.setPromotions(promotions);
-        }
+        // Actualizar Promotions
+        List<Promotion> promotions = gymMemberRequestDTO.getPromotionIds() != null
+                ? gymMemberRequestDTO.getPromotionIds().stream()
+                .map(p -> promotionRepository.findById(p)
+                        .orElseThrow(() -> new RuntimeException("Promotion not found with ID: " + p)))
+                .collect(Collectors.toList())
+                : List.of();
+        existingMember.setPromotions(promotions);
 
+        // Guardar
         existingMember = gymMemberRepository.save(existingMember);
-        return gymMemberMapper.toModel(existingMember);
+        return gymMemberMapper.toResponseDTO(existingMember);
     }
 
     @Override

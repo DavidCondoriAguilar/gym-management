@@ -1,13 +1,14 @@
 package com.gymmanagement.gym_app.service;
 
-import com.gymmanagement.gym_app.model.PaymentModel;
+import com.gymmanagement.gym_app.dto.request.PaymentRequestDTO;
+import com.gymmanagement.gym_app.dto.response.PaymentResponseDTO;
 import java.util.List;
 import java.util.UUID;
 
 public interface PaymentService {
-    PaymentModel createPayment(PaymentModel paymentModel);
-    PaymentModel getPaymentById(UUID id);
-    List<PaymentModel> getAllPayments();
-    PaymentModel updatePayment(UUID id, PaymentModel paymentModel);
+    PaymentResponseDTO createPayment(PaymentRequestDTO requestDTO);
+    PaymentResponseDTO getPaymentById(UUID id);
+    List<PaymentResponseDTO> getAllPayments();
+    PaymentResponseDTO updatePayment(UUID id, PaymentRequestDTO requestDTO);
     void deletePayment(UUID id);
 }

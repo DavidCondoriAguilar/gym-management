@@ -20,6 +20,8 @@ public interface MembershipRecordRepository extends JpaRepository<MembershipReco
 
     Optional<MembershipRecord> findByGymMember_IdAndActive(UUID gymMemberId, boolean active);
 
+    List<MembershipRecord> findByGymMemberId(UUID gymMemberId);
+
     @Query("SELECT m FROM MembershipRecord m LEFT JOIN FETCH m.gymMember g LEFT JOIN FETCH g.payments WHERE m.id = :id")
     Optional<MembershipRecord> findByIdWithPayments(@Param("id") UUID id);
 

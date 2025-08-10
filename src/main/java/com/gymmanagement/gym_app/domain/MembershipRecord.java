@@ -1,5 +1,6 @@
 package com.gymmanagement.gym_app.domain;
 
+import com.gymmanagement.gym_app.domain.enums.MembershipStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -19,7 +20,6 @@ public class MembershipRecord {
     @GeneratedValue
     private UUID id;
 
-    // Relationship: Each record belongs to a GymMember
     @ManyToOne
     @JoinColumn(name = "gym_member_id", nullable = false)
     private GymMember gymMember;
@@ -30,10 +30,24 @@ public class MembershipRecord {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private boolean active;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private MembershipStatus status;
 
     @Column(name = "cancellation_date")
     private LocalDate cancellationDate;
 
+    @Column(length = 400)
+    private String notes; // Observaciones administrativas
 
+    private boolean active;
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

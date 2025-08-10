@@ -39,6 +39,10 @@ public class Payment {
 
     private BigDecimal discountedAmount;
 
+    @ManyToOne
+    @JoinColumn(name = "promotion_id")
+    private Promotion promotion;
+
     public void applyDiscount(BigDecimal discountPercentage) {
         if (discountPercentage.compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal discount = amount.multiply(discountPercentage.divide(BigDecimal.valueOf(100)));

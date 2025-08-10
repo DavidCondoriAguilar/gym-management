@@ -28,7 +28,7 @@ public class MembershipPlan {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal cost;
 
-    @Column(nullable = false)
+    @Column(nullable = true, length = 500)
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -38,4 +38,8 @@ public class MembershipPlan {
     // Relationship: A plan can be assigned to many members
     @OneToMany(mappedBy = "membershipPlan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GymMember> gymMembers;
+
+    // Historial de precios (opcional, para evolución futura)
+    // @OneToMany(mappedBy = "membershipPlan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    // private List<PriceHistory> priceHistories;
 }

@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: gym-app
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gymManagement
+    username: postgres
+    password: deiv2025
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+    format-sql: true
+
+mapstruct:
+  defaultComponentModel: spring
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org:
+      springframework:
+        web: INFO
+    io:
+      swagger: INFO
+    org.springdoc: DEBUG
+  file:
+    name: logs/application.log
+
+# SpringDoc Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    doc-expansion: none
+  paths-to-match: /**
+  packages-to-scan: com.gymmanagement.gym_app.controller
+  show-actuator: true
+  cache:
+    disabled: true
+
+# Server configuration
+server:
+  servlet:
+    context-path: /
+  port: 8080
+
+  level:
+    org:
+      springframework:
+        web: INFO
+    io:
+      swagger: INFO
+    org.springdoc: DEBUG
+  file:
+    name: logs/application.log
+
+# API versioning info
+app:
+  api:
+    version: 1.0.0
+    title: Gym Management API
+    description: API for managing gym memberships, payments, and operations
+    contact:
+      name: API Support
+      email: support@gymmanagement.com
+      url: https://gymmanagement.com/support
+    license:
+      name: MIT License
+      url: https://opensource.org/licenses/MIT

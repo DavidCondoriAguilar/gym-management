@@ -1,9 +1,15 @@
 package com.gymmanagement.gym_app.controller;
 
+import com.gymmanagement.gym_app.dto.request.PromotionRequestDTO;
+import com.gymmanagement.gym_app.dto.response.PromotionResponseDTO;
 import com.gymmanagement.gym_app.model.PromotionModel;
 import com.gymmanagement.gym_app.service.PromotionService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,26 +22,34 @@ public class PromotionController {
 
     private final PromotionService promotionService;
 
-    @PostMapping
-    public ResponseEntity<PromotionModel> createPromotion(@RequestBody PromotionModel promotionModel) {
-        return ResponseEntity.ok(promotionService.createPromotion(promotionModel));
-    }
-
+    @PreAuthorize("permitAll")
     @GetMapping
-    public ResponseEntity<List<PromotionModel>> getAllPromotions() {
+    public ResponseEntity<List<PromotionResponseDTO>> getAllPromotions() {
         return ResponseEntity.ok(promotionService.getAllPromotions());
     }
 
+    @PreAuthorize("permitAll")
     @GetMapping("/{id}")
-    public ResponseEntity<PromotionModel> getPromotionById(@PathVariable UUID id) {
+    public ResponseEntity<PromotionResponseDTO> getPromotionById(@PathVariable UUID id) {
         return ResponseEntity.ok(promotionService.getPromotionById(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PromotionModel> updatePromotion(@PathVariable UUID id, @RequestBody PromotionModel promotionModel) {
-        return ResponseEntity.ok(promotionService.updatePromotion(id, promotionModel));
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping
+    public ResponseEntity<PromotionResponseDTO> createPromotion(@Valid @RequestBody PromotionRequestDTO requestDTO) {
+        return ResponseEntity.ok(promotionService.createPromotion(requestDTO));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
+    @PutMapping("/{id}")
+    public ResponseEntity<PromotionResponseDTO> updatePromotion(@PathVariable UUID id, @Valid @RequestBody PromotionRequestDTO requestDTO) {
+        return ResponseEntity.ok(promotionService.updatePromotion(id, requestDTO));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePromotion(@PathVariable UUID id) {
         promotionService.deletePromotion(id);

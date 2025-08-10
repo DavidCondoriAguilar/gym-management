@@ -19,12 +19,12 @@ public class GymAppApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins("http://localhost:5173")
+						.allowedOrigins("http://localhost:4200") // Cambiado a puerto 4200 para Angular
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-						.allowedHeaders("Authorization", "Content-Type", "Accept")
-						.allowCredentials(true);
+						.allowedHeaders("Authorization", "Content-Type", "Accept", "X-Requested-With")
+						.allowCredentials(true)
+						.maxAge(3600);
 			}
 		};
 	}
-
 }

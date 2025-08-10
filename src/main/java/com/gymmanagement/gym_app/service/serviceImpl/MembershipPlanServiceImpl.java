@@ -2,9 +2,10 @@ package com.gymmanagement.gym_app.service.serviceImpl;
 
 import com.gymmanagement.gym_app.domain.MembershipPlan;
 import com.gymmanagement.gym_app.domain.enums.MembershipType;
+import com.gymmanagement.gym_app.dto.request.MembershipPlanRequestDTO;
+import com.gymmanagement.gym_app.dto.response.MembershipPlanResponseDTO;
 import com.gymmanagement.gym_app.exception.ResourceNotFoundException;
 import com.gymmanagement.gym_app.mapper.MembershipPlanMapper;
-import com.gymmanagement.gym_app.model.MembershipPlanModel;
 import com.gymmanagement.gym_app.repository.MembershipPlanRepository;
 import com.gymmanagement.gym_app.service.MembershipPlanService;
 import lombok.RequiredArgsConstructor;
@@ -22,48 +23,46 @@ public class MembershipPlanServiceImpl implements MembershipPlanService {
 
     private final MembershipPlanRepository membershipPlanRepository;
     private final MembershipPlanMapper membershipPlanMapper;
+
     @Override
-    public MembershipPlanModel createMembershipPlan(MembershipPlanModel membershipPlanModel) {
-        if (membershipPlanModel.getType() == null) {
-            membershipPlanModel.setType(MembershipType.STANDARD);
+    public MembershipPlanResponseDTO createPlan(MembershipPlanRequestDTO requestDTO) {
+        MembershipPlan membershipPlan = membershipPlanMapper.fromRequestDTO(requestDTO);
+        if (membershipPlan.getType() == null) {
+            membershipPlan.setType(MembershipType.STANDARD);
         }
-
-        MembershipPlan membershipPlan = membershipPlanMapper.toEntity(membershipPlanModel);
         membershipPlan = membershipPlanRepository.save(membershipPlan);
-        return membershipPlanMapper.toModel(membershipPlan);
+        return membershipPlanMapper.toResponseDTO(membershipPlan);
     }
 
-
     @Override
-    public MembershipPlanModel getMembershipPlanById(UUID id) {
+    public MembershipPlanResponseDTO getPlanById(UUID id) {
         MembershipPlan membershipPlan = membershipPlanRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Plan not found"));
-        return membershipPlanMapper.toModel(membershipPlan);
+                .orElseThrow(() -> new RuntimeException("Membership Plan not found"));
+        return membershipPlanMapper.toResponseDTO(membershipPlan);
     }
 
     @Override
-    public List<MembershipPlanModel> getAllMembershipPlans() {
+    public List<MembershipPlanResponseDTO> getAllPlans() {
         return membershipPlanRepository.findAll().stream()
-                .map(membershipPlanMapper::toModel)
+                .map(membershipPlanMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public MembershipPlanModel updateMembershipPlan(UUID id, MembershipPlanModel membershipPlanModel) {
+    public MembershipPlanResponseDTO updatePlan(UUID id, MembershipPlanRequestDTO requestDTO) {
         MembershipPlan existingPlan = membershipPlanRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Plan not found"));
-
-        existingPlan.setName(membershipPlanModel.getName());
-        existingPlan.setDurationMonths(membershipPlanModel.getDurationMonths());
-        existingPlan.setCost(membershipPlanModel.getCost());
-        existingPlan.setDescription(membershipPlanModel.getDescription());
-
+                .orElseThrow(() -> new RuntimeException("Membership Plan not found"));
+        existingPlan.setName(requestDTO.getName());
+        existingPlan.setDurationMonths(requestDTO.getDurationMonths());
+        existingPlan.setCost(requestDTO.getCost());
+        existingPlan.setDescription(requestDTO.getDescription());
+        existingPlan.setType(MembershipType.valueOf(requestDTO.getType()));
         existingPlan = membershipPlanRepository.save(existingPlan);
-        return membershipPlanMapper.toModel(existingPlan);
+        return membershipPlanMapper.toResponseDTO(existingPlan);
     }
 
     @Override
-    public void deleteMembershipPlan(UUID id) {
+    public void deletePlan(UUID id) {
         if (!membershipPlanRepository.existsById(id)) {
             throw new ResourceNotFoundException("Plan not found");
         }

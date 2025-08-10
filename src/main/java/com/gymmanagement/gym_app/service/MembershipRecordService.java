@@ -1,18 +1,19 @@
 package com.gymmanagement.gym_app.service;
 
-import com.gymmanagement.gym_app.model.MembershipRecordModel;
+import com.gymmanagement.gym_app.dto.request.MembershipRecordRequestDTO;
+import com.gymmanagement.gym_app.dto.response.MembershipRecordResponseDTO;
 import java.util.List;
 import java.util.UUID;
 
 public interface MembershipRecordService {
 
-    MembershipRecordModel createMembershipRecord(MembershipRecordModel membershipRecordModel);
+    MembershipRecordResponseDTO createRecord(MembershipRecordRequestDTO requestDTO);
 
-    List<MembershipRecordModel> getMembershipRecordsByMember(UUID gymMemberId);
+    List<MembershipRecordResponseDTO> getRecordsByMember(UUID gymMemberId);
 
-    List<MembershipRecordModel> getAllMembershipRecords();
+    List<MembershipRecordResponseDTO> getAllRecords();
 
-    void deleteMembershipRecord(UUID id);
+    void deleteRecord(UUID id);
 
     void cancelarMembresia(UUID membershipRecordId);
 

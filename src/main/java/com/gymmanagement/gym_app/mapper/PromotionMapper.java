@@ -2,6 +2,8 @@ package com.gymmanagement.gym_app.mapper;
 
 import com.gymmanagement.gym_app.domain.GymMember;
 import com.gymmanagement.gym_app.domain.Promotion;
+import com.gymmanagement.gym_app.dto.request.PromotionRequestDTO;
+import com.gymmanagement.gym_app.dto.response.PromotionResponseDTO;
 import com.gymmanagement.gym_app.model.PromotionModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,6 +18,10 @@ public interface PromotionMapper {
     PromotionModel toModel(Promotion entity);
 
     Promotion toEntity(PromotionModel model);
+
+    PromotionResponseDTO toResponseDTO(Promotion entity);
+
+    Promotion fromRequestDTO(PromotionRequestDTO dto);
 
     default List<UUID> mapGymMemberIds(Promotion promotion) {
         if (promotion.getGymMembers() == null) {

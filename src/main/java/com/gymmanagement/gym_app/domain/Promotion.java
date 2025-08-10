@@ -27,6 +27,15 @@ public class Promotion {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    @Column(name = "max_uses")
+    private Integer maxUses;
+
+    @Column(name = "usage_count")
+    private Integer usageCount;
+
+    @Column(length = 400)
+    private String description;
+
     @ManyToMany(mappedBy = "promotions")
     private List<GymMember> gymMembers;
 }

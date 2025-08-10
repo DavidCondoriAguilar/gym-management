@@ -1,6 +1,8 @@
 package com.gymmanagement.gym_app.mapper;
 
 import com.gymmanagement.gym_app.domain.GymMember;
+import com.gymmanagement.gym_app.dto.request.GymMemberRequestDTO;
+import com.gymmanagement.gym_app.dto.response.GymMemberResponseDTO;
 import com.gymmanagement.gym_app.model.GymMemberModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,4 +20,8 @@ public interface GymMemberMapper {
     @Mapping(target = "membershipStartDate", source = "membershipStart")
     @Mapping(target = "membershipEndDate", source = "membershipEnd")
     GymMember toEntity(GymMemberModel model);
+
+    GymMemberResponseDTO toResponseDTO(GymMember entity);
+
+    GymMember fromRequestDTO(GymMemberRequestDTO dto);
 }

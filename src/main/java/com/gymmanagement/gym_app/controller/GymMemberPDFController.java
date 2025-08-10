@@ -3,7 +3,9 @@ package com.gymmanagement.gym_app.controller;
 import com.gymmanagement.gym_app.domain.GymMember;
 import com.gymmanagement.gym_app.domain.MembershipPlan;
 import com.gymmanagement.gym_app.domain.Promotion;
-import com.gymmanagement.gym_app.model.GymMemberModel;
+import com.gymmanagement.gym_app.dto.response.GymMemberResponseDTO;
+import com.gymmanagement.gym_app.dto.response.PromotionSummaryDTO;
+import com.gymmanagement.gym_app.dto.response.MembershipPlanSummaryDTO;
 import com.gymmanagement.gym_app.model.MembershipPlanModel;
 import com.gymmanagement.gym_app.model.PromotionModel;
 import com.gymmanagement.gym_app.service.GymMemberService;
@@ -32,14 +34,14 @@ public class GymMemberPDFController {
 
     @GetMapping("/members/{id}/report")
     public ResponseEntity<byte[]> generateMemberPdf(@PathVariable UUID id) {
-        GymMemberModel memberModel = gymMemberService.getMemberById(id);
+        GymMemberResponseDTO memberDTO = gymMemberService.getMemberById(id);
 
-        if (memberModel == null) {
+        if (memberDTO == null) {
             return ResponseEntity.notFound().build();
         }
 
-        // Convertimos GymMemberModel a GymMember
-        GymMember gymMember = convertToEntity(memberModel);
+        // Convertimos GymMemberResponseDTO a GymMember
+        GymMember gymMember = convertToEntity(memberDTO);
 
         ByteArrayInputStream pdfStream = pdfGeneratorService.generateMemberReport(gymMember);
 
@@ -52,28 +54,39 @@ public class GymMemberPDFController {
                 .body(pdfStream.readAllBytes());
     }
 
-    private GymMember convertToEntity(GymMemberModel model) {
+    private GymMember convertToEntity(GymMemberResponseDTO dto) {
         GymMember entity = new GymMember();
-        entity.setId(model.getId());
-        entity.setName(model.getName());
-        entity.setEmail(model.getEmail());
-        entity.setPhone(model.getPhone());
-        entity.setActive(model.getActive());
-        entity.setRegistrationDate(model.getRegistrationDate());
+        entity.setId(dto.getId());
+        entity.setName(dto.getName());
+        entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
+        entity.setActive(dto.getActive());
+        entity.setRegistrationDate(dto.getRegistrationDate());
 
         // Convertimos MembershipPlanModel a MembershipPlan
-        if (model.getMembershipPlan() != null) {
-            entity.setMembershipPlan(convertMembershipPlan(model.getMembershipPlan()));
+        if (dto.getMembershipPlan() != null) {
+            entity.setMembershipPlan(convertMembershipPlan(toModel(dto.getMembershipPlan())));
         }
 
         // Convertimos lista de PromotionModel a lista de Promotion
-        if (model.getPromotions() != null) {
-            entity.setPromotions(model.getPromotions().stream()
+        if (dto.getPromotions() != null) {
+            entity.setPromotions(dto.getPromotions().stream()
                     .map(this::convertPromotion)
                     .collect(Collectors.toList()));
         }
 
         return entity;
+    }
+
+    private MembershipPlanModel toModel(MembershipPlanSummaryDTO dto) {
+        if (dto == null) return null;
+        MembershipPlanModel model = new MembershipPlanModel();
+        model.setId(dto.getId());
+        model.setName(dto.getName());
+        model.setDurationMonths(dto.getDurationMonths());
+        model.setCost(dto.getCost());
+        // description and type are not present in DTO, so leave as null
+        return model;
     }
 
     private MembershipPlan convertMembershipPlan(MembershipPlanModel model) {
@@ -84,11 +97,11 @@ public class GymMemberPDFController {
         return plan;
     }
 
-    private Promotion convertPromotion(PromotionModel model) {
+    private Promotion convertPromotion(PromotionSummaryDTO dto) {
         Promotion promotion = new Promotion();
-        promotion.setId(model.getId());
-        promotion.setName(model.getName());
-        promotion.setDiscountPercentage(model.getDiscountPercentage());
+        promotion.setId(dto.getId());
+        promotion.setName(dto.getName());
+        promotion.setDiscountPercentage(dto.getDiscountPercentage());
         return promotion;
     }
 }

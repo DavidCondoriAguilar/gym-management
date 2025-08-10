@@ -1,10 +1,12 @@
 package com.gymmanagement.gym_app.controller;
 
-import com.gymmanagement.gym_app.model.GymMemberModel;
+import com.gymmanagement.gym_app.dto.request.GymMemberRequestDTO;
+import com.gymmanagement.gym_app.dto.response.GymMemberResponseDTO;
 import com.gymmanagement.gym_app.service.GymMemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,28 +19,33 @@ public class GymMemberController {
 
     private final GymMemberService gymMemberService;
 
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping
-    public ResponseEntity<List<GymMemberModel>> getAllMembers() {
+    public ResponseEntity<List<GymMemberResponseDTO>> getAllMembers() {
         return ResponseEntity.ok(gymMemberService.getAllMembers());
     }
 
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<GymMemberModel> getMemberById(@PathVariable UUID id) {
+    public ResponseEntity<GymMemberResponseDTO> getMemberById(@PathVariable UUID id) {
         return ResponseEntity.ok(gymMemberService.getMemberById(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<GymMemberModel> createMember(@Valid @RequestBody GymMemberModel gymMemberModel) {
-        GymMemberModel createdMember = gymMemberService.createMember(gymMemberModel);
+    public ResponseEntity<GymMemberResponseDTO> createMember(@Valid @RequestBody GymMemberRequestDTO gymMemberRequestDTO) {
+        GymMemberResponseDTO createdMember = gymMemberService.createMember(gymMemberRequestDTO);
         return ResponseEntity.ok(createdMember);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<GymMemberModel> updateMember(@PathVariable UUID id, @Valid @RequestBody GymMemberModel gymMemberModel) {
-        GymMemberModel updatedMember = gymMemberService.updateMember(id, gymMemberModel);
+    public ResponseEntity<GymMemberResponseDTO> updateMember(@PathVariable UUID id, @Valid @RequestBody GymMemberRequestDTO gymMemberRequestDTO) {
+        GymMemberResponseDTO updatedMember = gymMemberService.updateMember(id, gymMemberRequestDTO);
         return ResponseEntity.ok(updatedMember);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMember(@PathVariable UUID id) {
         gymMemberService.deleteMember(id);

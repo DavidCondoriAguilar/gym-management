@@ -3,14 +3,15 @@ package com.gymmanagement.gym_app.service.serviceImpl;
 import com.gymmanagement.gym_app.domain.GymMember;
 import com.gymmanagement.gym_app.domain.MembershipPlan;
 import com.gymmanagement.gym_app.domain.MembershipRecord;
+import com.gymmanagement.gym_app.domain.Payment;
+import com.gymmanagement.gym_app.dto.request.MembershipRecordRequestDTO;
+import com.gymmanagement.gym_app.dto.response.MembershipRecordResponseDTO;
 import com.gymmanagement.gym_app.exception.ResourceNotFoundException;
 import com.gymmanagement.gym_app.mapper.MembershipRecordMapper;
-import com.gymmanagement.gym_app.model.MembershipRecordModel;
 import com.gymmanagement.gym_app.repository.GymMemberRepository;
 import com.gymmanagement.gym_app.repository.MembershipPlanRepository;
 import com.gymmanagement.gym_app.repository.MembershipRecordRepository;
 import com.gymmanagement.gym_app.repository.PaymentRepository;
-import com.gymmanagement.gym_app.domain.Payment;
 import com.gymmanagement.gym_app.service.MembershipRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,49 +35,36 @@ public class MembershipRecordServiceImpl implements MembershipRecordService {
     private final PaymentRepository paymentRepository;
 
     @Override
-    public MembershipRecordModel createMembershipRecord(MembershipRecordModel membershipRecordModel) {
-        GymMember gymMember = gymMemberRepository.findById(membershipRecordModel.getGymMemberId())
-                .orElseThrow(() -> new RuntimeException("GymMember no encontrado"));
-
-        MembershipPlan membershipPlan = membershipPlanRepository.findById(membershipRecordModel.getMembershipPlanId())
-                .orElseThrow(() -> new RuntimeException("MembershipPlan no encontrado"));
-
-        MembershipRecord record = MembershipRecord.builder()
-                .gymMember(gymMember)
-                .membershipPlan(membershipPlan)
-                .startDate(membershipRecordModel.getStartDate())
-                .endDate(membershipRecordModel.getEndDate())
-                .active(true)
-                .cancellationDate(membershipRecordModel.getCancellationDate())
-                .build();
-
-        MembershipRecord savedRecord = membershipRecordRepository.save(record);
-        return membershipRecordMapper.toModel(savedRecord);
+    public MembershipRecordResponseDTO createRecord(MembershipRecordRequestDTO requestDTO) {
+        GymMember gymMember = gymMemberRepository.findById(requestDTO.getMemberId())
+                .orElseThrow(() -> new RuntimeException("GymMember not found"));
+        MembershipPlan membershipPlan = membershipPlanRepository.findById(requestDTO.getPlanId())
+                .orElseThrow(() -> new RuntimeException("MembershipPlan not found"));
+        MembershipRecord record = membershipRecordMapper.fromRequestDTO(requestDTO);
+        record.setGymMember(gymMember);
+        record.setMembershipPlan(membershipPlan);
+        record = membershipRecordRepository.save(record);
+        return membershipRecordMapper.toResponseDTO(record);
     }
 
     @Override
-    public List<MembershipRecordModel> getMembershipRecordsByMember(UUID gymMemberId) {
-        GymMember gymMember = gymMemberRepository.findById(gymMemberId)
-                .orElseThrow(() -> new RuntimeException("GymMember no encontrado"));
-
-        return membershipRecordRepository.findByGymMember(gymMember)
-                .stream()
-                .map(membershipRecordMapper::toModel)
-                .collect(Collectors.toList());
+    public List<MembershipRecordResponseDTO> getRecordsByMember(UUID gymMemberId) {
+        return membershipRecordRepository.findByGymMemberId(gymMemberId).stream()
+                .map(membershipRecordMapper::toResponseDTO)
+                .toList();
     }
 
     @Override
-    public List<MembershipRecordModel> getAllMembershipRecords() {
-        return membershipRecordRepository.findAll()
-                .stream()
-                .map(membershipRecordMapper::toModel)
-                .collect(Collectors.toList());
+    public List<MembershipRecordResponseDTO> getAllRecords() {
+        return membershipRecordRepository.findAll().stream()
+                .map(membershipRecordMapper::toResponseDTO)
+                .toList();
     }
 
     @Override
-    public void deleteMembershipRecord(UUID id) {
+    public void deleteRecord(UUID id) {
         if (!membershipRecordRepository.existsById(id)) {
-            throw new RuntimeException("MembershipRecord no encontrado");
+            throw new RuntimeException("MembershipRecord not found");
         }
         membershipRecordRepository.deleteById(id);
     }

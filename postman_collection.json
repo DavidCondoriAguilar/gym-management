@@ -1,0 +1,75 @@
+{
+  "info": {
+    "_postman_id": "b0b4e0c0-1111-4abc-9cde-123456789abc",
+    "name": "Gym Management API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección profesional de endpoints para la API de gestión de gimnasio."
+  },
+  "item": [
+    {
+      "name": "Gym Members",
+      "item": [
+        {"name": "List Members", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/gym-members", "host": ["{{baseUrl}}"], "path": ["api","v1","gym-members"]}}},
+        {"name": "Get Member by ID", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/gym-members/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","gym-members",":id"]}}},
+        {"name": "Create Member", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Juan Perez\",\n  \"email\": \"juan@email.com\",\n  \"phone\": \"999999999\"\n}"}, "url": {"raw": "{{baseUrl}}/api/v1/gym-members", "host": ["{{baseUrl}}"], "path": ["api","v1","gym-members"]}}},
+        {"name": "Update Member", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Juan Perez\",\n  \"email\": \"nuevo@email.com\"\n}"}, "url": {"raw": "{{baseUrl}}/api/v1/gym-members/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","gym-members",":id"]}}},
+        {"name": "Delete Member", "request": {"method": "DELETE", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/gym-members/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","gym-members",":id"]}}}
+      ]
+    },
+    {
+      "name": "Membership Plans",
+      "item": [
+        {"name": "List Plans", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/membership-plans", "host": ["{{baseUrl}}"], "path": ["api","v1","membership-plans"]}}},
+        {"name": "Get Plan by ID", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/membership-plans/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","membership-plans",":id"]}}},
+        {"name": "Create Plan", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Mensual\",\n  \"durationMonths\": 1,\n  \"cost\": 30.00,\n  \"description\": \"Plan mensual\",\n  \"type\": \"BASIC\"\n}"}, "url": {"raw": "{{baseUrl}}/api/v1/membership-plans", "host": ["{{baseUrl}}"], "path": ["api","v1","membership-plans"]}}},
+        {"name": "Update Plan", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Mensual Plus\"\n}"}, "url": {"raw": "{{baseUrl}}/api/v1/membership-plans/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","membership-plans",":id"]}}},
+        {"name": "Delete Plan", "request": {"method": "DELETE", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/membership-plans/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","membership-plans",":id"]}}}
+      ]
+    },
+    {
+      "name": "Membership Records",
+      "item": [
+        {"name": "List Records", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/membership-records", "host": ["{{baseUrl}}"], "path": ["api","v1","membership-records"]}}},
+        {"name": "Get Records by Member", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/membership-records/:gymMemberId", "host": ["{{baseUrl}}"], "path": ["api","v1","membership-records",":gymMemberId"]}}},
+        {"name": "Create Record", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"gymMemberId\": \"uuid\",\n  \"membershipPlanId\": \"uuid\",\n  \"startDate\": \"2025-07-07\",\n  \"endDate\": \"2025-08-07\",\n  \"status\": \"ACTIVA\"\n}"}, "url": {"raw": "{{baseUrl}}/api/v1/membership-records", "host": ["{{baseUrl}}"], "path": ["api","v1","membership-records"]}}},
+        {"name": "Delete Record", "request": {"method": "DELETE", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/membership-records/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","membership-records",":id"]}}}
+      ]
+    },
+    {
+      "name": "Promotions",
+      "item": [
+        {"name": "List Promotions", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/promotions", "host": ["{{baseUrl}}"], "path": ["api","v1","promotions"]}}},
+        {"name": "Get Promotion by ID", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/promotions/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","promotions",":id"]}}},
+        {"name": "Create Promotion", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Promo Invierno\",\n  \"discountPercentage\": 10.0,\n  \"startDate\": \"2025-07-01\",\n  \"endDate\": \"2025-07-31\"\n}"}, "url": {"raw": "{{baseUrl}}/api/v1/promotions", "host": ["{{baseUrl}}"], "path": ["api","v1","promotions"]}}},
+        {"name": "Update Promotion", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Promo Verano\"\n}"}, "url": {"raw": "{{baseUrl}}/api/v1/promotions/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","promotions",":id"]}}},
+        {"name": "Delete Promotion", "request": {"method": "DELETE", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/promotions/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","promotions",":id"]}}}
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {"name": "List Payments", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/payments", "host": ["{{baseUrl}}"], "path": ["api","v1","payments"]}}},
+        {"name": "Get Payment by ID", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/payments/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","payments",":id"]}}},
+        {"name": "Create Payment", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"gymMemberId\": \"uuid\",\n  \"amount\": 100.0,\n  \"paymentDate\": \"2025-07-07\",\n  \"paymentMethod\": \"TARJETA_CREDITO\",\n  \"status\": \"COMPLETADO\"\n}"}, "url": {"raw": "{{baseUrl}}/api/v1/payments", "host": ["{{baseUrl}}"], "path": ["api","v1","payments"]}}},
+        {"name": "Update Payment", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"amount\": 120.0\n}"}, "url": {"raw": "{{baseUrl}}/api/v1/payments/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","payments",":id"]}}},
+        {"name": "Delete Payment", "request": {"method": "DELETE", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/payments/:id", "host": ["{{baseUrl}}"], "path": ["api","v1","payments",":id"]}}}
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {"name": "Retention Report", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/reports/retention", "host": ["{{baseUrl}}"], "path": ["api","v1","reports","retention"]}}},
+        {"name": "Retention Report PDF", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/reports/retention/pdf", "host": ["{{baseUrl}}"], "path": ["api","v1","reports","retention","pdf"]}}}
+      ]
+    },
+    {
+      "name": "PDF Reports",
+      "item": [
+        {"name": "Member PDF Report", "request": {"method": "GET", "header": [], "url": {"raw": "{{baseUrl}}/api/v1/gym-members-pdf/members/:id/report", "host": ["{{baseUrl}}"], "path": ["api","v1","gym-members-pdf","members",":id","report"]}}}
+      ]
+    }
+  ],
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8080"}
+  ]
+}
