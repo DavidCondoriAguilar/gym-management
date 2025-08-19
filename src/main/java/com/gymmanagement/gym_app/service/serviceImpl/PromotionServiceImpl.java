@@ -5,6 +5,7 @@ import com.gymmanagement.gym_app.domain.Payment;
 import com.gymmanagement.gym_app.domain.Promotion;
 import com.gymmanagement.gym_app.dto.request.PromotionRequestDTO;
 import com.gymmanagement.gym_app.dto.response.PromotionResponseDTO;
+import com.gymmanagement.gym_app.dto.response.PromotionSummaryDTO;
 import com.gymmanagement.gym_app.mapper.PromotionMapper;
 import com.gymmanagement.gym_app.repository.GymMemberRepository;
 import com.gymmanagement.gym_app.repository.PaymentRepository;
@@ -68,6 +69,14 @@ public class PromotionServiceImpl implements PromotionService {
         }
         existingPromotion = promotionRepository.save(existingPromotion);
         return promotionMapper.toResponseDTO(existingPromotion);
+    }
+
+    @Override
+    public List<PromotionSummaryDTO> getPromotionsSummary() {
+        List<Promotion> promotions = promotionRepository.findAll();
+        return promotions.stream()
+                .map(promotionMapper::toSummaryDTO)
+                .collect(Collectors.toList());
     }
 
     @Override

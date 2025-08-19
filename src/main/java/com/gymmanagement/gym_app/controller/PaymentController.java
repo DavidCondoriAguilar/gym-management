@@ -14,11 +14,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import com.gymmanagement.gym_app.dto.response.MemberPaymentStatusDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -131,5 +132,36 @@ public class PaymentController {
     public ResponseEntity<Void> deletePayment(@PathVariable UUID id) {
         paymentService.deletePayment(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Operation(
+        summary = "Get payment status for a member",
+        description = "Retrieves payment status including total paid, total with discount, and remaining balance"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Payment status retrieved successfully",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = MemberPaymentStatusDTO.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Member not found",
+            content = @Content
+        )
+    })
+    @GetMapping(value = "/member/{memberId}/status", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MemberPaymentStatusDTO> getMemberPaymentStatus(
+            @Parameter(
+                description = "ID of the member to get payment status for",
+                required = true,
+                schema = @Schema(type = "string")
+            )
+            @PathVariable UUID memberId) {
+        return ResponseEntity.ok(paymentService.getMemberPaymentStatus(memberId));
     }
 }

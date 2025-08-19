@@ -7,12 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     List<Payment> findByGymMember(GymMember gymMember);
+    
+    boolean existsByGymMemberIdAndAmountAndPaymentDate(UUID gymMemberId, BigDecimal amount, LocalDate paymentDate);
 
 //    @Query("SELECT SUM(p.amount) FROM Payment p WHERE p.status = 'COMPLETADO'")
 //    BigDecimal getTotalRevenue();

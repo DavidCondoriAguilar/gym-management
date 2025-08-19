@@ -14,6 +14,7 @@ import java.util.UUID;
 public class PaymentModel {
     private UUID id;
     private UUID gymMemberId;
+    private UUID promotionId;
     private BigDecimal amount;
     private LocalDate paymentDate;
     private PaymentMethod paymentMethod;

@@ -2,6 +2,7 @@ package com.gymmanagement.gym_app.controller;
 
 import com.gymmanagement.gym_app.dto.request.PromotionRequestDTO;
 import com.gymmanagement.gym_app.dto.response.PromotionResponseDTO;
+import com.gymmanagement.gym_app.dto.response.PromotionSummaryDTO;
 import com.gymmanagement.gym_app.model.PromotionModel;
 import com.gymmanagement.gym_app.service.PromotionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,6 +27,12 @@ public class PromotionController {
     @GetMapping
     public ResponseEntity<List<PromotionResponseDTO>> getAllPromotions() {
         return ResponseEntity.ok(promotionService.getAllPromotions());
+    }
+    
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping("/summary")
+    public ResponseEntity<List<PromotionSummaryDTO>> getPromotionsSummary() {
+        return ResponseEntity.ok(promotionService.getPromotionsSummary());
     }
 
     @PreAuthorize("permitAll")
